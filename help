@@ -1,33 +1,408 @@
-#include "MyForm.h" 
-#include <Windows.h> 
-using namespace WindowsApp; // Название проекта 
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
 
-int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
-	Application::EnableVisualStyles();
-	Application::SetCompatibleTextRenderingDefault(false);
-	Application::Run(gcnew MyForm);
-	return 0;
+namespace WindowsFormsApp2
+{
+    public class Program
+    {
+        // Создаем список объявлений
+        private static List<Ad> ads = new List<Ad>();
+        // Создаем элемент ListBox для отображения объявлений
+        private static ListBox listBox = new ListBox();
+        // Создаем элемент поисковой строки
+        private static TextBox searchTextBox = new TextBox();
+
+        public static void Main()
+        {
+            // Создаем объект новой формы
+            Form myForm = new Form();
+            // Заголовок нашего окна
+            myForm.Text = "Программа продажи квартиры";
+            // Размеры окна
+            myForm.Width = 600;
+            myForm.Height = 400;
+
+            // Создаем кнопку для создания объявления
+            Button addButton = new Button();
+            addButton.Text = "Добавить объявление";
+            addButton.Location = new System.Drawing.Point(10, 10);
+            addButton.AutoSize = true;
+            addButton.Click += AddButton_Click;
+
+            // Создаем строку поиска
+            searchTextBox.Location = new System.Drawing.Point(10, 40);
+            searchTextBox.Width = 300;
+            searchTextBox.TextChanged += SearchTextBox_TextChanged;
+            searchTextBox.PlaceholderText = "Введите текст для поиска...";
+
+            // Устанавливаем свойства ListBox
+            listBox.Location = new System.Drawing.Point(10, 70);
+            listBox.Width = 300;
+            listBox.Height = 280;
+            listBox.SelectedIndexChanged += ListBox_SelectedIndexChanged;
+
+            // Создаем элементы управления для ввода данных объявления
+            Label nameLabel = new Label();
+            nameLabel.Text = "Имя:";
+            nameLabel.Location = new System.Drawing.Point(320, 10);
+            // Название объявления
+            TextBox nameTextBox = new TextBox();
+            nameTextBox.Multiline = true;
+            nameTextBox.ScrollBars = ScrollBars.Vertical;
+            nameTextBox.Location = new System.Drawing.Point(320, 30);
+            nameTextBox.Width = 250;
+            nameTextBox.Height = 50;
+
+            Label sizeLabel = new Label();
+            sizeLabel.Text = "Размер квартиры:";
+            sizeLabel.Location = new System.Drawing.Point(320, 90);
+            // Описание размера квартиры
+            TextBox sizeTextBox = new TextBox();
+            sizeTextBox.Multiline = true;
+            sizeTextBox.ScrollBars = ScrollBars.Vertical;
+            sizeTextBox.Location = new System.Drawing.Point(320, 110);
+            sizeTextBox.Width = 250;
+            sizeTextBox.Height = 50;
+
+            Label roomsLabel = new Label();
+            roomsLabel.Text = "Количество комнат:";
+            roomsLabel.Location = new System.Drawing.Point(320, 170);
+            // Описание количества комнат
+            TextBox roomsTextBox = new TextBox();
+            roomsTextBox.Multiline = true;
+            roomsTextBox.ScrollBars = ScrollBars.Vertical;
+            roomsTextBox.Location = new System.Drawing.Point(320, 190);
+            roomsTextBox.Width = 250;
+            roomsTextBox.Height = 50;
+
+            Label addressLabel = new Label();
+            addressLabel.Text = "Адрес:";
+            addressLabel.Location = new System.Drawing.Point(320, 250);
+            // Адрес квартиры
+            TextBox addressTextBox = new TextBox();
+            addressTextBox.Multiline = true;
+            addressTextBox.ScrollBars = ScrollBars.Vertical;
+            addressTextBox.Location = new System.Drawing.Point(320, 270);
+            addressTextBox.Width = 250;
+            addressTextBox.Height = 50;
+
+            // Добавляем обработчик события изменения текста в текстовых полях
+            nameTextBox.TextChanged += FilterTextBoxes_TextChanged;
+            sizeTextBox.TextChanged += FilterTextBoxes_TextChanged;
+            roomsTextBox.TextChanged += FilterTextBoxes_TextChanged;
+            addressTextBox.TextChanged += FilterTextBoxes_TextChanged;
+
+            // Добавляем все элементы на форму
+            myForm.Controls.Add(addButton);
+            myForm.Controls.Add(listBox);
+            myForm.Controls.Add(searchTextBox);
+            myForm.Controls.Add(nameLabel);
+            myForm.Controls.Add(nameTextBox);
+            myForm.Controls.Add(sizeLabel);
+            myForm.Controls.Add(sizeTextBox);
+            myForm.Controls.Add(roomsLabel);
+            myForm.Controls.Add(roomsTextBox);
+            myForm.Controls.Add(addressLabel);
+            myForm.Controls.Add(addressTextBox);
+
+            // Отображаем окно
+            Application.Run(myForm);
+        }
+
+        // Обработчик события нажатия на кнопку добавления объявления
+        private static void AddButton_Click(object sender, EventArgs e)
+        {
+            // Создаем новое окно для подробной информации об объявлении
+            Form detailsForm = new Form();
+            detailsForm.Text = "Добавить объявление";
+            detailsForm.Width = 500;
+            detailsForm.Height = 400;
+
+            // Создаем элементы управления для отображения информации об объявлении
+            Label nameLabel = new Label();
+            nameLabel.Text = "Имя:";
+            nameLabel.Location = new System.Drawing.Point(10, 10);
+
+            //Название объявления
+            TextBox nameTextBox = new TextBox();
+            nameTextBox.Multiline = true;
+            nameTextBox.ScrollBars = ScrollBars.Vertical;
+            nameTextBox.Location = new System.Drawing.Point(10, 30);
+            nameTextBox.Width = 200;
+            nameTextBox.Height = 50;
+
+            Label sizeLabel = new Label();
+            sizeLabel.Text = "Размер квартиры:";
+            sizeLabel.Location = new System.Drawing.Point(10, 90);
+
+            //Описание размера квартиры
+            TextBox sizeTextBox = new TextBox();
+            sizeTextBox.Multiline = true;
+            sizeTextBox.ScrollBars = ScrollBars.Vertical;
+            sizeTextBox.Location = new System.Drawing.Point(10, 110);
+            sizeTextBox.Width = 200;
+            sizeTextBox.Height = 50;
+
+            Label roomsLabel = new Label();
+            roomsLabel.Text = "Количество комнат:";
+            roomsLabel.Location = new System.Drawing.Point(10, 170);
+
+            //Описание количества комнат
+            TextBox roomsTextBox = new TextBox();
+            roomsTextBox.Multiline = true;
+            roomsTextBox.ScrollBars = ScrollBars.Vertical;
+            roomsTextBox.Location = new System.Drawing.Point(10, 190);
+            roomsTextBox.Width = 200;
+            roomsTextBox.Height = 50;
+
+            Label addressLabel = new Label();
+            addressLabel.Text = "Адрес:";
+            addressLabel.Location = new System.Drawing.Point(10, 250);
+
+            //Адрес квартиры
+            TextBox addressTextBox = new TextBox();
+            addressTextBox.Multiline = true;
+            addressTextBox.ScrollBars = ScrollBars.Vertical;
+            addressTextBox.Location = new System.Drawing.Point(10, 270);
+            addressTextBox.Width = 200;
+            addressTextBox.Height = 50;
+
+            //Кнопка добавить
+            Button saveButton = new Button();
+            saveButton.Text = "Добавить";
+            saveButton.Location = new System.Drawing.Point(10, 330);
+            saveButton.Click += (s, ev) =>
+            {   //Класс Ad в котором находится информация объявления
+                Ad newAd = new Ad { Name = nameTextBox.Text, Size = sizeTextBox.Text, Rooms = roomsTextBox.Text, Address = addressTextBox.Text, Title = nameTextBox.Text };
+                ads.Add(newAd);
+                listBox.Items.Add(newAd.Name);
+                detailsForm.Close();
+            };
+
+            //Добавление всех элементов на окно создания объявления
+            detailsForm.Controls.Add(nameLabel);
+            detailsForm.Controls.Add(nameTextBox);
+            detailsForm.Controls.Add(sizeLabel);
+            detailsForm.Controls.Add(sizeTextBox);
+            detailsForm.Controls.Add(roomsLabel);
+            detailsForm.Controls.Add(roomsTextBox);
+            detailsForm.Controls.Add(addressLabel);
+            detailsForm.Controls.Add(addressTextBox);
+            detailsForm.Controls.Add(saveButton);
+
+            //Отображения окна
+            detailsForm.ShowDialog();
+        }
+        //Обработчик при нажатии на созданное объявление
+        private static void ListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (listBox.SelectedIndex != -1)
+            {
+                Ad selectedAd = ads[listBox.SelectedIndex];
+
+                Form adDetailsForm = new Form();
+                adDetailsForm.Text = "Информация об объявлении";
+                adDetailsForm.Height = 350;
+                adDetailsForm.Width = 300;
+
+                Label titleLabel = new Label();
+                titleLabel.Text = "Заголовок:";
+                titleLabel.Location = new System.Drawing.Point(10, 10);
+
+                Label titleValueLabel = new Label();
+                titleValueLabel.Text = selectedAd.Title;
+                titleValueLabel.Location = new System.Drawing.Point(10, 30);
+
+                Label sizeLabel = new Label();
+                sizeLabel.Text = "Размер квартиры:";
+                sizeLabel.Location = new System.Drawing.Point(10, 70);
+
+                Label sizeValueLabel = new Label();
+                sizeValueLabel.Text = selectedAd.Size;
+                sizeValueLabel.Location = new System.Drawing.Point(10, 90);
+
+                Label roomsLabel = new Label();
+                roomsLabel.Text = "Количество комнат:";
+                roomsLabel.Location = new System.Drawing.Point(10, 130);
+
+                Label roomsValueLabel = new Label();
+                roomsValueLabel.Text = selectedAd.Rooms;
+                roomsValueLabel.Location = new System.Drawing.Point(10, 150);
+
+                Label addressLabel = new Label();
+                addressLabel.Text = "Адрес:";
+                addressLabel.Location = new System.Drawing.Point(10, 190);
+
+                Label addressValueLabel = new Label();
+                addressValueLabel.Text = selectedAd.Address;
+                addressValueLabel.Location = new System.Drawing.Point(10, 210);
+
+                Button buyButton = new Button();
+                buyButton.Text = "Купить";
+                buyButton.Location = new System.Drawing.Point(10, 250);
+                buyButton.AutoSize = true;
+                buyButton.Click += (s, ev) =>
+                {
+                    MessageBox.Show("Поздравляю с покупкой!");
+                };
+
+                adDetailsForm.Controls.Add(titleLabel);
+                adDetailsForm.Controls.Add(titleValueLabel);
+                adDetailsForm.Controls.Add(sizeLabel);
+                adDetailsForm.Controls.Add(sizeValueLabel);
+                adDetailsForm.Controls.Add(roomsLabel);
+                adDetailsForm.Controls.Add(roomsValueLabel);
+                adDetailsForm.Controls.Add(addressLabel);
+                adDetailsForm.Controls.Add(addressValueLabel);
+                adDetailsForm.Controls.Add(buyButton);
+
+                adDetailsForm.ShowDialog();
+            }
+        }
+
+        private static void UpdateListBox(List<Ad> adList)
+        {
+            // Очищаем элементы ListBox
+            listBox.Items.Clear();
+
+            // Добавляем каждое объявление из списка в ListBox
+            foreach (Ad ad in adList)
+            {
+                listBox.Items.Add(ad.Name);
+            }
+        }
+
+        // Метод для фильтрации и скрытия строк в ListBox
+        private static void FilterTextBoxes_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            string searchText = textBox.Text.ToLower();
+
+            List<Ad> searchResults;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                searchResults = ads.FindAll(ad =>
+                    ad.Name.ToLower().Contains(searchText) ||
+                    ad.Size.ToLower().Contains(searchText) ||
+                    ad.Rooms.ToLower().Contains(searchText) ||
+                    ad.Address.ToLower().Contains(searchText)
+                );
+            }
+            else
+            {
+                searchResults = ads;
+            }
+
+            UpdateListBox(searchResults);
+        }
+
+        private static void SearchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            TextBox searchTextBox = (TextBox)sender;
+            string searchText = searchTextBox.Text.ToLower();
+
+            List<Ad> searchResults;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                searchResults = ads.FindAll(ad => ad.Title.ToLower().Contains(searchText));
+            }
+            else
+            {
+                searchResults = ads;
+            }
+
+            UpdateListBox(searchResults);
+        }
+
+        private static void FilterByName_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            string searchText = textBox.Text.ToLower();
+
+            List<Ad> searchResults;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                searchResults = ads.FindAll(ad => ad.Name.ToLower().Contains(searchText));
+            }
+            else
+            {
+                searchResults = ads;
+            }
+
+            UpdateListBox(searchResults);
+        }
+
+        private static void FilterBySize_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            string searchText = textBox.Text.ToLower();
+
+            List<Ad> searchResults;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                searchResults = ads.FindAll(ad => ad.Size.ToLower().Contains(searchText));
+            }
+            else
+            {
+                searchResults = ads;
+            }
+
+            UpdateListBox(searchResults);
+        }
+
+        private static void FilterByRooms_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            string searchText = textBox.Text.ToLower();
+
+            List<Ad> searchResults;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                searchResults = ads.FindAll(ad => ad.Rooms.ToLower().Contains(searchText));
+            }
+            else
+            {
+                searchResults = ads;
+            }
+
+            UpdateListBox(searchResults);
+        }
+
+        private static void FilterByAddress_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            string searchText = textBox.Text.ToLower();
+
+            List<Ad> searchResults;
+
+            if (!string.IsNullOrEmpty(searchText))
+            {
+                searchResults = ads.FindAll(ad => ad.Address.ToLower().Contains(searchText));
+            }
+            else
+            {
+                searchResults = ads;
+            }
+
+            UpdateListBox(searchResults);
+        }
+
+        private class Ad
+        {
+            public string Name { get; set; } // Имя объявления
+            public string Size { get; set; } // Размер квартиры
+            public string Rooms { get; set; } // Количество комнат
+            public string Address { get; set; } // Адрес
+            public string Title { get; set; } // Заголовок объявления (добавлено новое свойство)
+
+            
+           
+        }
+    }
 }
-// Не нравиться что нет между :: класса, взял из гайда, https://www.youtube.com/watch?v=QbMVxkzTi54
-
-#include <windows.h>
-#include <tchar.h>
-
-LRESULT CALLBACK WndProc(
-   _In_ HWND   hWnd,
-   _In_ UINT   message,
-   _In_ WPARAM wParam,
-   _In_ LPARAM lParam
-); 
-// этот код я взял с оф.сайта вообще https://learn.microsoft.com/ru-ru/cpp/windows/walkthrough-creating-windows-desktop-applications-cpp?view=msvc-170, хотел просто спросить будет ли рабоать
-
-Cами задания:
-1.Даны стороны треугольника. Найдите периметр и площадь этого тре-угольника
-2.Имеется N вешалок с одним крючком. Оказалось, что из этих вешалок легко собираются вешалки, состоящие из нескольких крючков. Подсчитайте, сколько существует различных вариантов сбора из имеющихся вешалок с одним крючком собрать вешалки, состоящие из двух и трех крючков
-3.Напишите программу, которая с помощью цикла for подсчитывает сумму всех четных чисел от 5 до 25.
-4.Программа получает на вход последовательность целых неотрицательных чисел, каждое число записано в отдельной строке ввода.
-Последовательность завершается числом 0, при считывании которого программа должна закончить свою работу и вывести количество членов последовательности (не считая завершающего числа 0).
-Числа, следующие за числом 0, считывать не нужно
-5.Найдите наибольший элемент массива.(А.к.а ввести рандомный массив который будет выводить наибольший элемент)
-6.Оформить функцию поиска количества отрицательных элементов массива. В главной программе дано 3 одномерных массива a, b, c c длиной 10 элементов каждый. Применить функцию для каждого из 3-х заданных массивов 
-7.Составьте программу вывода на экран треугольника. При нажатии на кнопку со стрелкой вправо треугольник вращается по часовой стрелке вокруг одной из вершин, при нажатии на кнопку со стрелкой влево  против часовой стрелки.
